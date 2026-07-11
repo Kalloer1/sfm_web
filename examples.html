@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>示例库 · SFM 管理代码可视化</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main>
+    <h1 class="page-title">官方示例库</h1>
+    <p class="page-sub">
+      来自模组仓库 <code>examples/</code> 目录的 8 个官方示例，逐个可视化并配中文讲解。
+      点击「在编辑器中打开」可加载到可视化编辑器继续修改。
+    </p>
+    <div id="gallery" class="grid cols-2"></div>
+  </main>
+
+  <script src="assets/js/sfm-data.js"></script>
+  <script src="assets/js/sfml-parse.js"></script>
+  <script src="assets/js/sfml-render.js"></script>
+  <script src="assets/js/nav.js"></script>
+  <script>
+    SFMNav.mount("examples");
+
+    var gallery = document.getElementById("gallery");
+    (window.SFM_EXAMPLES || []).forEach(function (ex) {
+      var res = SFML.parse(ex.code);
+      var diag = SFMLRender.render(res.ast, res.errors);
+      var points = (ex.points || []).map(function (p) { return "<li>" + p + "</li>"; }).join("");
+
+      var card = document.createElement("div");
+      card.className = "card ex-card";
+      card.innerHTML =
+        '<div class="ex-head"><span class="ex-id">' + ex.id + '</span>' +
+          '<span class="ex-title" style="font-weight:700;font-size:16px">' + ex.title + '</span></div>' +
+        '<div class="ex-summary">' + ex.summary + '</div>' +
+        '<div class="ex-diagram">' + diag + '</div>' +
+        '<ul>' + points + '</ul>' +
+        '<details><summary style="cursor:pointer;color:var(--accent-d);font-size:13px">查看 SFML 代码</summary>' +
+          '<pre>' + SFMLRender.highlight(ex.code) + '</pre></details>' +
+        '<div class="ex-actions"><a class="btn ghost" href="visualizer.html?ex=' + ex.id + '">在编辑器中打开 ↗</a></div>';
+      gallery.appendChild(card);
+    });
+  </script>
+</body>
+</html>

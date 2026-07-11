@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SFM 管理代码可视化 · 超级工厂管理模组</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>⚙️ 超级工厂管理模组 · 管理代码可视化</h1>
+      <p>
+        <b>Super Factory Manager (SFM)</b> 是 Minecraft 1.20.1 的物流自动化模组，它用一门专为「搬运物品 / 流体 / 能量 / 化学品」设计的
+        领域专用语言 <b>SFML</b> 来编写工厂程序。本网站把这段「管理代码」<b>可视化</b>——你写下的每段程序，
+        都会实时变成一张清晰的工厂流程图。
+      </p>
+      <div class="cta">
+        <a class="btn" href="visualizer.html">▶ 打开可视化编辑器</a>
+        <a class="btn ghost" href="examples.html">浏览官方示例</a>
+        <a class="btn ghost" href="reference.html">SFML 语法参考</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>这个网站能做什么</h2>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3 style="margin-top:0">🔍 实时可视化</h3>
+          <p class="dim" style="margin-bottom:0">
+            在编辑器里写 SFML，右侧立刻生成工厂流程图：触发器、输入/输出流向、条件分支一目了然。
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">📚 官方示例库</h3>
+          <p class="dim" style="margin-bottom:0">
+            内置模组仓库 <code>examples/</code> 下的 8 个官方示例，逐个可视化并配中文讲解。
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">🧱 模组目录 & 语法</h3>
+          <p class="dim" style="margin-bottom:0">
+            方块 / 物品 / 能力类型（物品·流体·能量·化学品）一览，以及完整的 SFML 关键字参考。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>它是怎么工作的</h2>
+      <div class="card">
+        <ul class="feature-list">
+          <li><span class="ic">①</span><div><b>贴标签</b>：用标签枪（Label Gun）给世界里的方块贴上标签，如 <code>a</code>、<code>b</code>、<code>chest</code>。</div></li>
+          <li><span class="ic">②</span><div><b>写程序</b>：在管理器（Manager）里用 SFML 编写程序，例如 <code>every 20 ticks do input from a output to b end</code>。</div></li>
+          <li><span class="ic">③</span><div><b>连线缆</b>：用线缆把管理器与各方块连成网络，程序即可自动搬运资源。</div></li>
+          <li><span class="ic">④</span><div><b>可视化</b>：把同样的 SFML 文本粘进本网站，立刻看到它是怎么「流」的。</div></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>试试看</h2>
+      <div class="card">
+        <p style="margin-top:0">把下面这段直接粘进<a href="visualizer.html">编辑器</a>，或点任意链接开始探索：</p>
+        <pre style="background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;overflow:auto">name "示例"
+every 20 ticks do
+    input iron_ingot from a
+    output to b
+    if a has gt 10 coal then
+        output 5 to c
+    end
+end</pre>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    数据来源于 TeamDman/SuperFactoryManager（MC 1.20.1，MPL-2.0）。本网站为可视化教学用途，与模组作者无隶属关系。
+  </footer>
+
+  <script src="assets/js/nav.js"></script>
+  <script>SFMNav.mount("index");</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# 仅用于数据提取的模组源码（非站点内容）
+sfm-source/
+
+# 开发期脚本（非站点内容）
+test-parser.js
+gen-data.js
+
+# 已被 sfml-parse.js 取代（沙箱 FS 偶发不同步的旧副本）
+assets/js/sfml-parser.js
+
+# 系统/编辑器
+.DS_Store
+Thumbs.db
+
+# 调试/渲染产物
+chrome_log*.txt
+shot*.png
+dump*.html
+
+# 项目本地数据（非站点内容）
+.workbuddy/

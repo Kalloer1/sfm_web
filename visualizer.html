@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>代码生成器 · SFM 管理代码可视化</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main>
+    <h1 class="page-title">SFML 代码生成器</h1>
+    <p class="page-sub">不用手写代码：在左侧点选工厂逻辑，右侧实时生成可复制进游戏的 SFML 程序，并自动画出工厂流程图。也可切到「代码解析器」粘贴/编辑代码查看流程图。</p>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="builder" type="button">🧩 代码生成器</button>
+      <button class="tab" data-tab="parser" type="button">⌨️ 代码解析器</button>
+    </div>
+
+    <!-- 生成器 -->
+    <section id="tab-builder" class="tab-panel">
+      <div id="builderRoot"></div>
+    </section>
+
+    <!-- 解析器 -->
+    <section id="tab-parser" class="tab-panel" style="display:none">
+      <div class="toolbar">
+        <label for="exampleSelect" style="font-size:13px;color:var(--muted)">加载示例：</label>
+        <select id="exampleSelect"></select>
+        <button id="copyBtn" type="button" class="btn">复制代码</button>
+        <button id="downloadBtn" type="button" class="btn">下载 .sfm</button>
+        <button id="clearBtn" type="button" class="btn">清空</button>
+        <span class="hint">提示：标签（a / b / chest）需在你的存档里用标签枪贴好</span>
+      </div>
+      <div class="viz-layout">
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="code-wrap">
+            <pre id="highlight" aria-hidden="true"><code></code></pre>
+            <textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+          </div>
+        </div>
+        <div class="card">
+          <div id="diagram"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/sfm-data.js"></script>
+  <script src="assets/js/sfml-parse.js"></script>
+  <script src="assets/js/sfml-render.js"></script>
+  <script src="assets/js/sfml-builder.js"></script>
+  <script src="assets/js/nav.js"></script>
+  <script>
+    SFMNav.mount("visualizer");
+
+    // ---------- tabs ----------
+    var tabs = document.querySelectorAll(".tab");
+    tabs.forEach(function (t) {
+      t.addEventListener("click", function () {
+        tabs.forEach(function (x) { x.classList.remove("active"); });
+        t.classList.add("active");
+        var name = t.getAttribute("data-tab");
+        document.getElementById("tab-builder").style.display = name === "builder" ? "" : "none";
+        document.getElementById("tab-parser").style.display = name === "parser" ? "" : "none";
+      });
+    });
+
+    // ---------- builder ----------
+    SFMLBuilder.mount(document.getElementById("builderRoot"));
+
+    // ---------- parser (free-text) ----------
+    var editor = document.getElementById("editor");
+    var highlight = document.getElementById("highlight").querySelector("code");
+    var diagram = document.getElementById("diagram");
+    var select = document.getElementById("exampleSelect");
+
+    var DEFAULT_CODE = 'name "我的第一个工厂"\n' +
+      'every 20 ticks do\n' +
+      '    input iron_ingot from a\n' +
+      '    output to b\n' +
+      '    if a has ge 10 coal then\n' +
+      '        output 5 to c\n' +
+      '    end\n' +
+      'end';
+
+    function update() {
+      var text = editor.value;
+      highlight.innerHTML = SFMLRender.highlight(text);
+      var res = SFML.parse(text);
+      diagram.innerHTML = SFMLRender.render(res.ast, res.errors);
+    }
+
+    editor.addEventListener("input", update);
+    editor.addEventListener("scroll", function () {
+      var pre = document.getElementById("highlight");
+      pre.scrollTop = editor.scrollTop;
+      pre.scrollLeft = editor.scrollLeft;
+    });
+
+    (window.SFM_EXAMPLES || []).forEach(function (ex) {
+      var opt = document.createElement("option");
+      opt.value = ex.id; opt.textContent = ex.id + " · " + ex.title;
+      select.appendChild(opt);
+    });
+    select.addEventListener("change", function () {
+      var ex = (window.SFM_EXAMPLES || []).filter(function (e) { return e.id === select.value; })[0];
+      if (ex) { editor.value = ex.code; update(); }
+    });
+
+    document.getElementById("copyBtn").addEventListener("click", function () {
+      navigator.clipboard.writeText(editor.value).then(function () { alert("已复制到剪贴板"); });
+    });
+    document.getElementById("downloadBtn").addEventListener("click", function () {
+      var name = (SFML.parse(editor.value).ast.name || "program").replace(/[^\w\-]+/g, "_");
+      var blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = name + ".sfm"; a.click();
+      URL.revokeObjectURL(a.href);
+    });
+    document.getElementById("clearBtn").addEventListener("click", function () { editor.value = ""; update(); });
+
+    var params = new URLSearchParams(location.search);
+    var deepId = params.get("ex");
+    var deepEx = (window.SFM_EXAMPLES || []).filter(function (e) { return e.id === deepId; })[0];
+    if (deepEx) { editor.value = deepEx.code; select.value = deepEx.id; }
+    else { editor.value = DEFAULT_CODE; }
+    update();
+  </script>
+</body>
+</html>

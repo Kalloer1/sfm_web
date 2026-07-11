@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>语法参考 · SFM 管理代码可视化</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main>
+    <h1 class="page-title">SFML 语法参考</h1>
+    <p class="page-sub">
+      SFML（Super Factory Manager Language）关键字与语法速查。关键字<b>大小写不敏感</b>，注释用 <code>--</code>。
+      数据提取自模组源码中的 <code>SFML.g4</code> 语法文件。
+    </p>
+    <div id="ref"></div>
+  </main>
+
+  <script src="assets/js/sfm-data.js"></script>
+  <script src="assets/js/nav.js"></script>
+  <script>
+    SFMNav.mount("reference");
+
+    var ref = window.SFM_REFERENCE || {};
+    var wrap = document.getElementById("ref");
+    Object.keys(ref).forEach(function (key) {
+      var group = ref[key];
+      var rows = (group.items || []).map(function (it) {
+        return "<tr><td><code>" + it[0] + "</code></td><td>" + it[1] + "</td></tr>";
+      }).join("");
+      var card = document.createElement("div");
+      card.className = "card ref-group";
+      card.innerHTML = '<h3>' + group.title + '</h3>' +
+        '<table class="ref"><tbody>' + rows + '</tbody></table>';
+      wrap.appendChild(card);
+    });
+  </script>
+</body>
+</html>

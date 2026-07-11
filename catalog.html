@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>模组目录 · SFM 管理代码可视化</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main>
+    <h1 class="page-title">模组目录</h1>
+    <p class="page-sub">
+      超级工厂管理模组的核心构成：<b>能力类型</b>（SFML 能搬运的资源种类）、<b>方块</b> 与 <b>物品</b>。
+      内容依据模组源码整理，帮助你理解「管理代码」背后操作的对象。
+    </p>
+
+    <section class="section">
+      <h2>能力类型（Resource Types）</h2>
+      <div class="card">
+        <div class="cap-row" id="caps"></div>
+        <p class="dim" style="margin:10px 0 0">
+          SFML 通过类型前缀区分资源：<code>fluid:</code>、<code>energy:</code>、<code>chemical:</code>（默认是物品）。
+          例如 <code>fluid:minecraft:water</code> 表示水，<code>energy:*</code> 表示任意能量。
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>方块（Blocks）</h2>
+      <div class="grid cols-3" id="blocks"></div>
+    </section>
+
+    <section class="section">
+      <h2>物品（Items）</h2>
+      <div class="grid cols-3" id="items"></div>
+    </section>
+  </main>
+
+  <script src="assets/js/sfm-data.js"></script>
+  <script src="assets/js/nav.js"></script>
+  <script>
+    SFMNav.mount("catalog");
+
+    var cat = window.SFM_CATALOG || {};
+    function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+    var caps = document.getElementById("caps");
+    (cat.capabilities || []).forEach(function (c) {
+      var pill = document.createElement("span");
+      pill.className = "cap-pill";
+      pill.style.background = c.color;
+      pill.innerHTML = "<b>" + esc(c.key) + "</b> · " + esc(c.name) + " — " + esc(c.desc);
+      caps.appendChild(pill);
+    });
+
+    var blocks = document.getElementById("blocks");
+    (cat.blocks || []).forEach(function (b) {
+      var card = document.createElement("div");
+      card.className = "card cat-item";
+      card.innerHTML = '<div class="cat-name">' + esc(b.name) +
+        (b.essential ? '<span class="tag-essential">核心</span>' : '') + '</div>' +
+        '<div class="cat-cls">' + esc(b.cls) + '</div>' +
+        '<div class="cat-desc">' + esc(b.desc) + '</div>';
+      blocks.appendChild(card);
+    });
+
+    var items = document.getElementById("items");
+    (cat.items || []).forEach(function (it) {
+      var card = document.createElement("div");
+      card.className = "card cat-item";
+      card.innerHTML = '<div class="cat-name">' + esc(it.name) +
+        (it.essential ? '<span class="tag-essential">核心</span>' : '') + '</div>' +
+        '<div class="cat-cls">' + esc(it.cls) + '</div>' +
+        '<div class="cat-desc">' + esc(it.desc) + '</div>';
+      items.appendChild(card);
+    });
+  </script>
+</body>
+</html>
